@@ -16,7 +16,10 @@
 
         var main = function() {
             // le code du jeu
-            requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraîchissement de la page
+            game.clearLayer(game.playersBallLayer);
+            game.displayPlayers();
+            game.moveBall();
+            requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraichissement de la page
         }
 
         window.onload = initialisation; // appel de la fonction initialisation au chargement de la page
