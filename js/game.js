@@ -26,10 +26,13 @@ var game = {
         speed : 1,
         directionX : 1,
         directionY : 1,
+        inGame : false,
 
         move : function() {
-            this.posX += this.directionX * this.speed;
-            this.posY += this.directionY * this.speed;
+            if ( this.inGame ) {
+                this.posX += this.directionX * this.speed;
+                this.posY += this.directionY * this.speed;
+            }
         },
 
         bounce : function(soundToPlay) {
@@ -50,6 +53,16 @@ var game = {
                 return true;
             }
             return false;
+        },
+
+        lost : function(player) {
+            var returnValue = false;
+            if ( player.originalPosition == "left" && this.posX < player.posX - this.width ) {
+                returnValue = true;
+            } else if ( player.originalPosition == "right" && this.posX > player.posX + player.width ) {
+                returnValue = true;
+            }
+            return returnValue;
         }
     },
 
@@ -61,7 +74,9 @@ var game = {
         posY : 200,
         goUp : false,
         goDown : false,
-        originalPosition : "left"
+        originalPosition : "left",
+        score : 0,
+        ai : false
     },
 
     playerTwo : {
@@ -72,7 +87,9 @@ var game = {
         posY : 200,
         goUp : false,
         goDown : false,
-        originalPosition : "right"
+        originalPosition : "right",
+        score : 0,
+        ai : true
     },
 
     init : function() {
@@ -157,5 +174,25 @@ var game = {
             game.ball.directionX = -game.ball.directionX;
             this.playerSound.play();
         }
+    },
+
+    lostBall : function() {
+        if ( this.ball.lost(this.playerOne) ) {
+            this.playerTwo.score++;
+            this.ball.inGame = false;
+
+            if ( this.playerOne.ai ) {
+                setTimeout(game.ai.startBall(), 3000);
+            }
+        } else if ( this.ball.lost(this.playerTwo) ) {
+            this.playerOne.score++;
+            this.ball.inGame = false;
+
+            if ( this.playerTwo.ai ) {
+                setTimeout(game.ai.startBall(), 3000);
+            }
+        }
+        this.scoreLayer.clear();
+        this.displayScore(this.playerOne.score, this.playerTwo.score);
     }
 }

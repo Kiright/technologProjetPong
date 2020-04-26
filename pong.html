@@ -23,6 +23,9 @@
             game.movePlayers();
             game.displayPlayers();
             game.moveBall();
+            if ( game.ball.inGame ) {
+                game.lostBall();
+            }
             game.ai.move();
             game.collideBallWithPlayersAndAction();
             requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraichissement de la page

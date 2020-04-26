@@ -45,5 +45,21 @@ game.ai = {
         } else if ( this.player.posY + this.player.height/2 < game.groundHeight / 2 ) {
             this.player.posY++;
         }
+    },
+
+    startBall : function() {
+        if ( this.player.originalPosition == "right" ) {
+            this.ball.inGame = true;
+            this.ball.posX = this.player.posX;
+            this.ball.posY = this.player.posY;
+            this.ball.directionX = -1;
+            this.ball.directionY = 1;
+        } else {
+            this.ball.inGame = true;
+            this.ball.posX = this.player.posX + this.player.width;
+            this.ball.posY = this.player.posY;
+            this.ball.directionX = 1;
+            this.ball.directionY = 1;
+        }
     }
 }
