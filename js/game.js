@@ -11,8 +11,8 @@ var game = {
     scorePosPlayer2 : 365,
 
     ground : {
-        posX : 100,
-        posY : 100
+        posX : 0,
+        posY : 0
     },
 
     ball : {
@@ -72,6 +72,7 @@ var game = {
         this.displayBall();
         this.displayPlayers();
         this.initKeyboard(game.control.onKeyDown, game.control.onKeyUp);
+        this.initMouse(game.control.onMouseMove);
     },
 
     displayScore : function(scorePlayer1, scorePlayer2) {
@@ -104,9 +105,23 @@ var game = {
     },
 
     movePlayers : function() {
-        if (game.playerOne.goUp && game.playerOne.posY > 0)
-            game.playerOne.posY-=5;
-        else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height)
-            game.playerOne.posY+=5;
+        if ( game.control.controlSystem == "KEYBOARD" ) {
+            // keyboard control
+            if ( game.playerOne.goUp ) {
+                game.playerOne.posY-=5;
+            } else if ( game.playerOne.goDown ) {
+                game.playerOne.posY+=5;
+            }
+        } else if ( game.control.controlSystem == "MOUSE" ) {
+            // mouse control
+            if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer)
+                game.playerOne.posY -= 5;
+            else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer)
+                game.playerOne.posY += 5;
+        }
+    },
+
+    initMouse : function(onMouseMoveFunction) {
+        window.onmousemove = onMouseMoveFunction;
     }
-};
+}
