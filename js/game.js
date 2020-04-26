@@ -9,6 +9,8 @@ var game = {
     playersBallLayer : null,
     scorePosPlayer1 : 300,
     scorePosPlayer2 : 365,
+    wallSound : null,
+    playerSound : null,
 
     ground : {
         posX : 0,
@@ -30,11 +32,15 @@ var game = {
             this.posY += this.directionY * this.speed;
         },
 
-        bounce : function() {
-            if ( this.posX > game.groundWidth || this.posX < 0 )
+        bounce : function(soundToPlay) {
+            if ( this.posX > game.groundWidth || this.posX < 0 ) {
                 this.directionX = -this.directionX;
-            if ( this.posY > game.groundHeight || this.posY < 0  )
+                soundToPlay.play();
+            }
+            if ( this.posY > game.groundHeight || this.posY < 0  ) {
                 this.directionY = -this.directionY;
+                soundToPlay.play();
+            }
         },
 
         collide : function(anotherItem) {
@@ -78,10 +84,14 @@ var game = {
         game.display.drawTextInLayer(this.playersBallLayer, "JOUEURSETBALLE", "10px Arial", "#FF0000", 100, 100);
 
         this.displayScore(0,0);
-        this.displayBall();
+        this.displayBall(200,200);
         this.displayPlayers();
+
         this.initKeyboard(game.control.onKeyDown, game.control.onKeyUp);
         this.initMouse(game.control.onMouseMove);
+
+        this.wallSound = new Audio("./sound/wall.ogg");
+        this.playerSound = new Audio("./sound/player.ogg");
     },
 
     displayScore : function(scorePlayer1, scorePlayer2) {
@@ -100,7 +110,7 @@ var game = {
 
     moveBall : function() {
         this.ball.move();
-        this.ball.bounce();
+        this.ball.bounce(this.wallSound);
         this.displayBall();
     },
 
@@ -135,9 +145,13 @@ var game = {
     },
 
     collideBallWithPlayersAndAction : function() {
-        if ( this.ball.collide(game.playerOne) )
+        if ( this.ball.collide(game.playerOne) ) {
             game.ball.directionX = -game.ball.directionX;
-        if ( this.ball.collide(game.playerTwo) )
+            this.playerSound.play();
+        }
+        if ( this.ball.collide(game.playerTwo) ) {
             game.ball.directionX = -game.ball.directionX;
+            this.playerSound.play();
+        }
     }
 }
