@@ -66,6 +66,10 @@ var game = {
                 returnValue = true;
             }
             return returnValue;
+        },
+
+        speedUp: function() {
+            this.speed = this.speed + .1;
         }
     },
 
@@ -120,10 +124,11 @@ var game = {
         this.playerSound = new Audio("./sound/player.ogg");
 
         game.ai.setPlayerAndBall(this.playerTwo, this.ball);
+        game.speedUpBall();
     },
 
     displayScore : function(scorePlayer1, scorePlayer2) {
-        game.display.drawTextInLayer(this.scoreLayer, scorePlayer1, "60px Arial", "#FFFFFF", this.scorePosPlayer1, 55);
+        game.display.drawTextInLayer(this.scoreLayer, scorePlayer1, "60px Arial", "#ffffff", this.scorePosPlayer1, 55);
         game.display.drawTextInLayer(this.scoreLayer, scorePlayer2, "60px Arial", "#FFFFFF", this.scorePosPlayer2, 55);
     },
 
@@ -174,11 +179,11 @@ var game = {
 
     collideBallWithPlayersAndAction : function() {
         if ( this.ball.collide(game.playerOne) ) {
-            game.ball.directionX = -game.ball.directionX;
+            this.changeBallPath(game.playerOne, game.ball);
             this.playerSound.play();
         }
         if ( this.ball.collide(game.playerTwo) ) {
-            game.ball.directionX = -game.ball.directionX;
+            this.changeBallPath(game.playerTwo, game.ball);
             this.playerSound.play();
         }
     },
@@ -224,9 +229,83 @@ var game = {
 
     reinitGame : function() {
         this.ball.inGame = false;
+        this.ball.speed = 1;
         this.playerOne.score = 0;
         this.playerTwo.score = 0;
         this.scoreLayer.clear();
         this.displayScore(this.playerOne.score, this.playerTwo.score);
+    },
+
+    ballOnPlayer : function(player, ball) {
+        var returnValue = "CENTER";
+        var playerPositions = player.height/5;
+        if ( ball.posY > player.posY && ball.posY < player.posY + playerPositions ) {
+            returnValue = "TOP";
+        } else if ( ball.posY >= player.posY + playerPositions && ball.posY < player.posY + playerPositions*2 ) {
+            returnValue = "MIDDLETOP";
+        } else if ( ball.posY >= player.posY + playerPositions*2 && ball.posY < player.posY +
+            player.height - playerPositions ) {
+            returnValue = "MIDDLEBOTTOM";
+        } else if ( ball.posY >= player.posY + player.height - playerPositions && ball.posY < player.posY +
+            player.height ) {
+            returnValue = "BOTTOM";
+        }
+        return returnValue;
+    },
+
+    changeBallPath : function(player, ball) {
+        if (player.originalPosition == "left") {
+            switch (game.ballOnPlayer(player, ball)) {
+                case "TOP":
+                    ball.directionX = 1;
+                    ball.directionY = -3;
+                    break;
+                case "MIDDLETOP":
+                    ball.directionX = 1;
+                    ball.directionY = -1;
+                    break;
+                case "CENTER":
+                    ball.directionX = 2;
+                    ball.directionY = 0;
+                    break;
+                case "MIDDLEBOTTOM":
+                    ball.directionX = 1;
+                    ball.directionY = 1;
+                    break;
+                case "BOTTOM":
+                    ball.directionX = 1;
+                    ball.directionY = 3;
+                    break;
+            }
+        } else {
+            switch (game.ballOnPlayer(player, ball)) {
+                case "TOP":
+                    ball.directionX = -1;
+                    ball.directionY = -3;
+                    break;
+                case "MIDDLETOP":
+                    ball.directionX = -1;
+                    ball.directionY = -1;
+                    break;
+                case "CENTER":
+                    ball.directionX = -2;
+                    ball.directionY = 0;
+                    break;
+                case "MIDDLEBOTTOM":
+                    ball.directionX = -1;
+                    ball.directionY = 1;
+                    break;
+                case "BOTTOM":
+                    ball.directionX = -1;
+                    ball.directionY = 3;
+                    break;
+            }
+        }
+    },
+
+    speedUpBall: function() {
+        setInterval(function() {
+            game.ball.speedUp();
+        }, 5000);
     }
 }
