@@ -83,7 +83,7 @@ var game = {
         goDown : false,
         originalPosition : "left",
         score : 0,
-        ai : true
+        ai : false
     },
 
     playerTwo : {
