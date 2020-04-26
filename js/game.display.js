@@ -59,5 +59,11 @@ game.display = {
     drawRectangleInLayer : function(targetLayer, width, heigth, color, x, y) {
         targetLayer.context2D.fillStyle = color;
         targetLayer.context2D.fillRect (x, y, width, heigth);
+    },
+
+    drawTextInLayer : function(targetLayer, text, font, color, x, y) {
+        targetLayer.context2D.font = font;
+        targetLayer.context2D.fillStyle = color;
+        targetLayer.context2D.fillText(text, x, y);
     }
 }
