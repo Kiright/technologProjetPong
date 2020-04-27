@@ -1,0 +1,53 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="./css/pong.css">
+</head>
+    <body>
+    <div>
+        <h1>Vous êtes sur le projet TECHNOLOG de David VANDENSCHRICK</h1>
+        <h2>Amusez-vous bien avec ce ping-pong en ligne</h2>
+        <div id="principal">
+            Vous pouvez soit jouer jusqu'à x personne.<br>
+            Le capitaine crée la partie et les autres joueurs ont juste à la rejoindre.<br>
+            Si un joueur n'est pas attribué, une ia le remplacera.<br><br>
+
+            <div id="menu">
+                <input id="createGame" type="button" value="Créer partie"><br><br>
+                <input id="RoomName" type="text" placeholder="Entrer l'id d'un sallon">
+                <button id="joinGame">Rejoindre une partie</button>
+            </div>
+            <div id="waitingRoom">
+                <p id="message"></p>
+                <p id="buttons">
+                <button id="buttonReady" hidden>Ready</button>
+                </p>
+                <p>
+                <table>
+                    <tr>
+                        <td id="p1Ready"></td>
+                        <td>Joueur 1</td>
+                        <td id="pseudoP1"></td>
+                    </tr>
+                    <tr>
+                        <td id="p2Ready"></td>
+                        <td>Joueur 2</td>
+                        <td id="pseudoP2"></td>
+                    </tr>
+                </table>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="divGame"></div>
+    </body>
+   <script src="js/game.js"></script>
+   <script src="js/game.display.js"></script>
+   <script src="js/game.control.js"></script>
+   <script src="js/game.keycode.js"></script>
+   <script src="js/game.ai.js"></script>
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="./js/socket.js"></script>
+   <script>
+    var socket = io.connect('http://localhost:8080');
+   </script> 
+</html>

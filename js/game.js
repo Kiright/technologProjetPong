@@ -12,18 +12,18 @@ var game = {
     wallSound : null,
     playerSound : null,
     divGame : null,
-    gameOn : false,
+    gameOn : true,
     startGameButton : null,
 
     ground : {
-        posX : 50,
-        posY : 100
+        posX : null,
+        posY : null
     },
 
     ball : {
         width : 10,
         height : 10,
-        color : "#FFFFFF",
+        color : "#fff000",
         posX : 200,
         posY : 200,
         speed : 1,
@@ -76,27 +76,34 @@ var game = {
     playerOne : {
         width : 10,
         height : 50,
-        color : "#FFFFFF",
-        posX : 30,
+        color : "#49ff00",
+        posX : 40,
         posY : 200,
         goUp : false,
         goDown : false,
         originalPosition : "left",
         score : 0,
-        ai : false
+        ai : false,
+        isMe : false,
+        isSelected : false,
+        turnServe : true
     },
 
     playerTwo : {
         width : 10,
         height : 50,
-        color : "#FFFFFF",
+        color : "#ff0000",
         posX : 650,
         posY : 200,
         goUp : false,
         goDown : false,
         originalPosition : "right",
         score : 0,
-        ai : true
+        ai : false,
+        isMe : false,
+        isSelected : false,
+        isAI : false,
+        turnServe : false
     },
 
     init : function() {
@@ -107,23 +114,23 @@ var game = {
         game.display.drawRectangleInLayer(this.groundLayer, this.netWidth, this.groundHeight, this.netColor, this.groundWidth/2 - this.netWidth/2, 0);
 
         this.scoreLayer = game.display.createLayer("score", this.groundWidth, this.groundHeight, this.divGame, 1, undefined, this.ground.posX, this.ground.posY);
-        game.display.drawTextInLayer(this.scoreLayer , "SCORE", "10px Arial", "#FF0000", 10, 10);
+        //game.display.drawTextInLayer(this.scoreLayer , "SCORE", "10px Arial", "#FF0000", 10, 10);
 
         this.playersBallLayer = game.display.createLayer("joueursetballe", this.groundWidth, this.groundHeight, this.divGame, 2, undefined, this.ground.posX, this.ground.posY);
-        game.display.drawTextInLayer(this.playersBallLayer, "JOUEURSETBALLE", "10px Arial", "#FF0000", 100, 100);
+        //game.display.drawTextInLayer(this.playersBallLayer, "JOUEURSETBALLE", "10px Arial", "#FF0000", 100, 100);
 
         this.displayScore(0,0);
         this.displayBall(200,200);
         this.displayPlayers();
 
         this.initKeyboard(game.control.onKeyDown, game.control.onKeyUp);
-        this.initMouse(game.control.onMouseMove);
-        this.initStartGameButton();
+        //this.initMouse(game.control.onMouseMove);
+        //this.initStartGameButton();
 
         this.wallSound = new Audio("./sound/wall.ogg");
         this.playerSound = new Audio("./sound/player.ogg");
-
-        game.ai.setPlayerAndBall(this.playerTwo, this.ball);
+        if(this.playerTwo.isAI)
+            game.ai.setPlayerAndBall(this.playerTwo, this.ball);
         game.speedUpBall();
     },
 
@@ -159,17 +166,34 @@ var game = {
     movePlayers : function() {
         if ( game.control.controlSystem == "KEYBOARD" ) {
             // keyboard control
-            if ( game.playerOne.goUp ) {
-                game.playerOne.posY-=5;
-            } else if ( game.playerOne.goDown ) {
-                game.playerOne.posY+=5;
+            if(game.playerOne.isMe){
+                if ( game.playerOne.goUp && game.playerOne.posY > 0) {
+                    game.playerOne.posY-=5;
+                } else if ( game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height) {
+                    game.playerOne.posY+=5;
+                }
+            }
+            else if(game.playerTwo.isMe){
+                if ( game.playerTwo.goUp && game.playerTwo.posY > 0) {
+                    game.playerTwo.posY-=5;
+                } else if ( game.playerTwo.goDown && game.playerTwo.posY < game.groundHeight - game.playerTwo.height) {
+                    game.playerTwo.posY+=5;
+                }
             }
         } else if ( game.control.controlSystem == "MOUSE" ) {
             // mouse control
-            if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer)
-                game.playerOne.posY -= 5;
-            else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer)
-                game.playerOne.posY += 5;
+            if(game.playerOne.isMe){
+                if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer && game.playerOne.posY > 0)
+                    game.playerOne.posY-=5;
+                else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer && game.playerOne.posY < game.groundHeight - game.playerOne.height)
+                    game.playerOne.posY+=5;
+            }
+            else if(game.playerTwo.isMe){
+                if (game.playerTwo.goUp && game.playerTwo.posY > game.control.mousePointer && game.playerTwo.posY > 0)
+                    game.playerTwo.posY-=5;
+                else if (game.playerTwo.goDown && game.playerTwo.posY < game.control.mousePointer && game.playerTwo.posY < game.groundHeight - game.playerTwo.height)
+                    game.playerTwo.posY+=5;
+            }
         }
     },
 
